@@ -1,4 +1,4 @@
-# Nest Remote Sensor Hack
+# Nest Remote Sensor API
 
 This app gets the temperature of the remote sensor. *It's a super hacky work around until Nest releases their official API for this. It might stop working at any time.*
 
