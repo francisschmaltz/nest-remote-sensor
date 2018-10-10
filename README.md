@@ -1,6 +1,6 @@
 # Nest Remote Sensor Hack
 
-This app gets the temperature of the remote sensor.
+This app gets the temperature of the remote sensor. *It's a super hacky work around until Nest releases their official API for this. It might stop working at any time.*
 
 
 This app is built for a PAAS host like Heroku. You can run this locally by using `node index.js`
