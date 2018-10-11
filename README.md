@@ -8,21 +8,21 @@ This app is built for a PAAS host like Heroku. You can run this locally by using
 
 ## Getting started
 
-First you need to get the UDID of the remote sensor. You can do this by running `node udid.js`. This will log a JSON response of the remote sensors. Grab the UDID and add it to `var remoteSensor = data.kryptonite['UDID'];` in `index.js`
+First you need to get the UDID of the remote sensor. You can do this by running `node index.js` and visiting `localhost:5000/get-udid`. This will log a JSON response of the remote sensors. Grab the UDID and request to temperature by visiting `localhost:5000/get-temp/UDID`
 
 
 ## Use with homebridge
 
 Use the [homebridge-http-temp module](https://www.npmjs.com/package/homebridge-http-temperature) to get the data from this node app.
 
-Here is the config I used:
+Here is the config I used (replace 11A111AAA11A1111 with your UDID):
 
 ```
 "accessories": [
     {
         "accessory": "HttpTemperature",
         "name": "Another Room's Name",
-        "url": "http://192.168.1.210/get-temp",
+        "url": "http://192.168.1.210/get-temp/11A111AAA11A1111",
         "http_method": "GET",
         "field_name": "temperature",
         "update_interval": "600000ms",
