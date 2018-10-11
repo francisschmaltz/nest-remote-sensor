@@ -26,12 +26,12 @@ function tempConvert(celTemp) {
 }
 
 
-function getDataFromNest() {
+function getDataFromNest(sensorUdid) {
 	return new Promise(function(resolve, reject) {
 		console.log('Promise ran');
 		nestApi.login(function(data) {
 			nestApi.get(function(data) {
-				var remoteSensor = data.kryptonite['UDID'];
+				var remoteSensor = data.kryptonite[sensorUdid];
 
 				// Gem temp of remote sensor and return value in freedom units
 				var currentRemoteTemp = tempConvert(remoteSensor.current_temperature);
@@ -48,27 +48,45 @@ function getDataFromNest() {
 
 app.get('/', (req, res) => res.send('It Works!'))
 
-app.get('/get-temp/', function (req, res) {
-	console.log('Checking Temp');
+app.get('/get-udid', function (req, res) {
+	nestApi.login(function(data) {
+		nestApi.get(function(data) {
+			// console.log(data.kryptonite);
+
+			// Print out list of UDIDs
+			var listOfSensors = Object.keys(data.kryptonite);
+			console.log('Active UDIDs on account');
+			console.log(listOfSensors);
+			res.send(listOfSensors)
+		});
+	});
+});
+
+app.get('/get-temp/:sensor', function (req, res) {
+
+	// UDID of sensor requested
+	var sensor = req.params["sensor"];
+
+	console.log("checking temp for sensor : " + sensor);
 	res.setHeader('Content-Type', 'application/json');
 
 	var remoteTemp
 
-	redisClient.get('temperature', function(err, reply) {
+	redisClient.get(sensor, function(err, reply) {
 		if ( reply === null) {
 			console.log('no temp set - pulling from remote');
 
 			// Run Async func to get data
-			var getRemoteTemp = getDataFromNest();
+			var getRemoteTemp = getDataFromNest(sensor);
 
 		    getRemoteTemp.then(function(result) {
 		        remoteTemp = result;
 		        console.log('Remote temp = ' + remoteTemp);
 
 				// Set temp to Redis for store
-				redisClient.set('temperature', remoteTemp);
+				redisClient.set(sensor, remoteTemp);
 				// Set temp to expire in 5 minutes
-				redisClient.expire('temperature', 600);
+				redisClient.expire(sensor, 600);
 
 				// Send response
 				res.json({temperature: Number(remoteTemp)})
