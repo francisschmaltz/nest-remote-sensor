@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').load();
+}
+
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
@@ -17,7 +21,7 @@ redisClient.get('roomTemp', function(err, reply) {
 
 // Setup Nest API with credentials
 var NestApi = require('nest-api');
-var nestApi = new NestApi('email@example.com', 'password');
+var nestApi = new NestApi(process.env.EMAIL, process.env.PASSWORD);
 
 function tempConvert(celTemp) {
 	var fahrTemp = celTemp * 9 / 5 + 32;
